@@ -83,3 +83,34 @@
 - Keep business logic in `/packages/core` runtime-agnostic
 - Use standard Web APIs where possible
 - Queue consumers can be moved to Fly later without API changes
+
+## ADR-006: PWA First, Native Later
+**Date:** 2026-05-17
+**Status:** Accepted
+
+**Context:** Need to decide web app vs native mobile for MVP. Painters are phone-first.
+
+**Decision:** Ship PWA for MVP, re-evaluate native at 500 paying orgs.
+
+**Rationale:**
+- Modern PWA capabilities cover 90% of needs: camera, geolocation, offline storage, push notifications (Android fully, iOS 16.4+ with install)
+- PaintScout and DripJobs succeed without native apps
+- One codebase = 2x faster iteration
+- 10 week timeline achievable
+
+**PWA Must-Haves:**
+- Install prompt
+- Offline queue for time entries/expenses with background sync
+- Camera capture with compression
+- Push notifications for key events
+- Bottom nav thumb-friendly
+
+**Triggers for Native:**
+- <40% PWA install rate
+- Offline sync failures >5%
+- Feature requests for background location or contacts
+- Competitive losses citing "real app"
+
+**Mitigation:**
+- Build with Capacitor.js compatibility from start for easy native compilation later
+
