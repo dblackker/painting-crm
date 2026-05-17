@@ -52,3 +52,34 @@
 **Consequences:**
 + Higher close rates
 + More engineering complexity early
+
+## ADR-005: Cloudflare Workers Long-term Strategy
+**Date:** 2026-05-17
+**Status:** Accepted
+
+**Context:** Need to decide if Workers scales beyond few tenants or if full servers needed.
+
+**Decision:** Commit to Cloudflare Workers for MVP and first 2 years up to ~5,000 orgs. Build with abstraction layer for future hybrid migration.
+
+**Phased Approach:**
+- Phase 1 (0-1k orgs): Pure Workers + Queues + Hyperdrive
+- Phase 2 (1k-10k orgs): Hybrid - Edge API for reads, Fly.io for heavy writes/jobs
+- Phase 3 (10k+ orgs): Re-evaluate based on metrics
+
+**Consequences:**
++ Edge performance and low ops overhead now
++ Pay-per-request cost model fits bursty usage
++ Escape hatches built in from day one
+- Need to monitor CPU p95 monthly
+- Some workloads (PDF gen, bulk sync) offloaded to Queues/Browser Rendering
+- Vendor lock-in mitigated by abstraction layer
+
+**Monitoring Triggers for Migration:**
+- Worker CPU p95 >20s for 2 consecutive months
+- Consistent queue backlog
+- Need for persistent WebSockets
+
+**Mitigations:**
+- Keep business logic in `/packages/core` runtime-agnostic
+- Use standard Web APIs where possible
+- Queue consumers can be moved to Fly later without API changes
